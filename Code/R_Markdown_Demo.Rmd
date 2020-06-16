@@ -1,0 +1,232 @@
+---
+title: "R Markdown Demo"
+author: "Professor Becca Selden"
+date: "6/10/2020"
+output: 
+  html_document:
+    theme: flatly
+    toc: TRUE
+    toc_float: TRUE
+---
+## Objective
+To get more familiar with R, Rmarkdown, and the tidyverse
+
+## Initial Setup
+The top portion of this is the metadata. Fill this out everytime! Give it a title, you are the author, include the date, and choose the output. Here I choose the html output, using a special theme "flatly" and include a floating table of contents (toc) that automatically generates based on the headers I provide below.
+
+```{r setup, include=TRUE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  comment= NA,
+  warning = FALSE,
+  fig.path=here::here("Rmd.Figures/"))
+```
+
+This first time, I'm saying include=TRUE for this to be included in the RMarkdown. In future RMarkdown files, I'll say include=F to supress this from being shown in RMarkdown.
+
+I also name my chunk "setup". This both helps with debuging if something fails, and can also be used to automatically name figures based on their code chunk (see below)
+
+Here I also specify the options for how the Markdown should be "knit".  
+- echo=TRUE unless othewise specified, show the RCode that made something  
+- comment=NA remove the hash marks that would otherwise show up in the left hand side of the code output  
+- warning=FALSE don't show any warnings that result from running any code  
+- fig.path="place_for_Figures" this will save figures that were generated while rendering the html. They will be named based on the name of the chunk.
+
+
+## Packages 
+Since R is open source many people have developed packages to accomplish specific tasks or analyses. We will take advantage of that by installing them. 
+```{r install_packages, eval=F}
+install.packages("here")
+install.packages("tidyverse")
+```
+
+Once you have installed a package you don't have re-run that (so I put eval=F).
+
+When we want to use a package we use the function `library(packagename)`. 
+```{r load_packages}
+library(here)
+library(tidyverse)
+```
+
+Sometimes two packages have the same name for a function. Whichever one is loaded second will supersede the first, and you will be warned when you load the second package that it is "masking" a function. However, we can specify which one we want to use using `package_name::function_name`.
+
+You can see that `dplyr` within the tidyverse package has a function called `filter()` as does the `stats` package within baseR. If we want to use `filter()` from the stats packages you can say `stats::filter()`
+
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+?cars
+summary(cars)
+```
+
+
+In this case, we are requesting that R provide summary statistics for a built in dataset `cars` using the function `summary()`
+
+
+Let's take a look at the `chickwts` dataset that comes with baseR
+```{r rhelp}
+?chickwts
+?plot
+?ggplot
+
+summary(chickwts)
+```
+
+
+
+What are the first few lines of the dataset?
+```{r head}
+head(chickwts)
+```
+
+What are the names of the columns?
+```{r names}
+names(chickwts)
+```
+
+Getting the structure of an object
+```{r structure}
+str(chickwts)
+```
+We see that the object `chickwts` is a `data.frame` with two variables (columns), and 71 rows (obs.). The column weight is a numeric variable, and feed is a factor with 6 different levels.
+
+## Including Plots
+
+You can also embed plots, and control the dimensions with `fig.width` and `fig.height`. Here I specify the figure will have a width of 5 and a height of 3 inches. Use `fig.cap` to include a figure caption in the html output of the RMarkdown.
+
+For ggplot, you first specify the dataset you want to use for the plot with `ggplot(data)` then specify the geometry you want it to plot in `+geom_something()` where you specify the aesthetics with the argument `aes(x,y)`
+
+```{r plot_chick, fig.width=5, fig.height=3, fig.cap="Figure 1. Chick weights on different feed types after 6 weeks"}
+ggplot(data=chickwts) + geom_boxplot(aes(x=feed, y=weight, fill=feed))
+```
+
+
+
+Save the resulting plot as a standalone figure
+```{r save plot, echo=FALSE}
+ggsave(here::here("FinalFigures/demo_chick_plot.png"), height=5, width=7, unit="in")
+```
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot
+
+## Manipulating data
+
+Let's manipulate the data using the tidyverse
+
+#### Add a column `mutate()`
+Create a new column for individual chick ID
+```{r mutate}
+chickwts <- chickwts %>%
+  mutate(chick_id=seq(1:length(weight)),
+         dummy_variable=2+1)
+chickwts
+```
+
+#### Filter data `filter()`
+Subset data only to the feed types that are animal based
+```{r filter}
+chickwts_animal <- chickwts %>%
+  filter(feed %in% c("casein", "meatmeal"))
+
+chickwts_soy <- chickwts %>%
+  filter(feed =="soybean")
+
+#Remove the chickwts_soy
+rm(chickwts_soy)
+#rm(list=ls()) #remove all things in global environment
+```
+
+#### Rename columns
+I can change the column name this way
+```{r rename columns}
+chickwts <- chickwts %>%
+  rename(chick_num = chick_id)
+```
+
+#### Re-assigning values within a column
+I can use `ifelse()` to reclassify values within a column
+```{r reclassify}
+chickwts <- chickwts %>%
+  mutate(size_class=ifelse(weight > 250, "Large", "Small"))
+chickwts
+```
+
+
+#### Summarize `summarize()` with `group_by()`
+```{r summarize}
+chickwts_summ <- chickwts %>%
+  group_by(feed) %>%
+  summarize(mean_wt=mean(weight), #mean weight on feed type
+            sd_wt=sd(weight), #standard deviation of feed type
+            n_chicks=n()) #number of chicks raised on each data
+
+chickwts_summ
+```
+
+## Overlaying graphs of data from two datasets
+
+With ggplot we can do this pretty easily by specifying the dataset not in the ggplot call, but in the specific call for the geometry. 
+For example we can plot the raw data from chickwts as points, then overlay the mean and standard deviation from the summary dataset as a point with errorbar.
+```{r overlay graphs}
+ggplot()+
+  geom_point(data=chickwts, 
+             aes(x=feed, y=weight, pch=size_class))+ #use pch=sizeclass to plot a different symbol for whether the chick is large or small
+  geom_point(data=chickwts_summ, 
+             aes(x=feed, y=mean_wt), 
+             col="red", pch=1, cex=4)+ #here I specify color is red, type of symbol is pch=1, and make it bigger than the raw data points by expanding it cex=4
+  geom_errorbar(data=chickwts_summ, 
+                aes(x=feed, ymin=mean_wt - sd_wt, ymax=mean_wt+sd_wt),
+                width=0.2, col="red") #make it red, and make the width more narrow than the default
+```
+
+In this one I also didn't specify the height or width for the figure in the html. Compare with the first graph
+
+## Merging Data
+
+For this we'll use the datasets within the tidyverse on a very small subset of rock bandmembers `band_members` and their instruments `band_instruments`
+
+```{r original datasets}
+band_members
+band_instruments
+band_instruments2
+```
+
+We can see that `band_members` includes Mick Jagger from the Rolling Stones and two members of the Beatles (John and Paul). We also see that `band_instruments` gives the instrument played by those two Beatles, plus a different member of the Stones. `band_instruments2` has the same data but uses `artist` as the column name rather than `name` 
+
+The generic pseudocode for these merges is
+`new_df <- join(df1, df2)`
+First, let's discuss the difference between the types of joins.
+- `inner_join(df1, df2)` only keeps the rows that are present in both df1 and df2.  
+- `left_join(df1, df2)` keeps all the rows in df1 (the L one in the argument), even if they don't appear in df2, but only keep the ones in df2 that are in df1.  
+- `right_join(df1, df2)` keeps all the rows in df2 (the R one in the argument), even if they don't appear in df1, but only keep the ones in df1 that are in df2.  
+- `full_join(df1, df2)` keeps all rows in both df1 and df2.  
+
+Let's try these different types of joins:
+```{r inner join}
+inner_join(band_members, band_instruments)
+```
+
+```{r left join}
+left_join(band_members, band_instruments)
+```
+
+```{r right join}
+right_join(band_members, band_instruments)
+```
+
+```{r full join}
+full_join(band_members, band_instruments)
+```
+
+How do I merge tables that don't share a column name?
+Answer: use the by argument. The one that is kept is the `name`
+```{r join no name}
+inner_join(band_members, band_instruments2, by=c("name"="artist"))
+```
+
+
+
