@@ -7,6 +7,7 @@ output:
     theme: flatly
     toc: TRUE
     toc_float: TRUE
+    keep_md: yes
 ---
 ## Objective
 To get more familiar with R, Rmarkdown, and the tidyverse
