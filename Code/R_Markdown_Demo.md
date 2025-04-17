@@ -52,7 +52,7 @@ library(here)
 ```
 
 ```
-here() starts at /Users/becca.selden/Documents/Collaborations/WellesleyResearch/r_workshop
+here() starts at /Users/rs5/Documents/WellesleyResearch/r_workshop
 ```
 
 ```r
@@ -60,20 +60,19 @@ library(tidyverse)
 ```
 
 ```
-── Attaching packages ────────────────────────────────────────────────── tidyverse 1.3.0 ──
+── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.5
+✔ forcats   1.0.0     ✔ stringr   1.5.1
+✔ ggplot2   3.4.4     ✔ tibble    3.2.1
+✔ lubridate 1.9.3     ✔ tidyr     1.3.1
+✔ purrr     1.0.2     
 ```
 
 ```
-✓ ggplot2 3.3.0     ✓ purrr   0.3.4
-✓ tibble  3.0.0     ✓ dplyr   0.8.5
-✓ tidyr   1.0.2     ✓ stringr 1.4.0
-✓ readr   1.3.1     ✓ forcats 0.5.0
-```
-
-```
-── Conflicts ───────────────────────────────────────────────────── tidyverse_conflicts() ──
-x dplyr::filter() masks stats::filter()
-x dplyr::lag()    masks stats::lag()
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
 ```
 
 Sometimes two packages have the same name for a function. Whichever one is loaded second will supersede the first, and you will be warned when you load the second package that it is "masking" a function. However, we can specify which one we want to use using `package_name::function_name`.
@@ -112,6 +111,20 @@ Let's take a look at the `chickwts` dataset that comes with baseR
 ```r
 ?chickwts
 ?plot
+```
+
+```
+Help on topic 'plot' was found in the following packages:
+
+  Package               Library
+  base                  /Library/Frameworks/R.framework/Resources/library
+  graphics              /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/library
+
+
+Using the first match ...
+```
+
+```r
 ?ggplot
 
 summary(chickwts)
@@ -179,7 +192,7 @@ For ggplot, you first specify the dataset you want to use for the plot with `ggp
 ggplot(data=chickwts) + geom_boxplot(aes(x=feed, y=weight, fill=feed))
 ```
 
-![Figure 1. Chick weights on different feed types after 6 weeks](/Users/becca.selden/Documents/Collaborations/WellesleyResearch/r_workshop/Rmd.Figures/plot_chick-1.png)
+![Figure 1. Chick weights on different feed types after 6 weeks](/Users/rs5/Documents/WellesleyResearch/r_workshop/Rmd.Figures/plot_chick-1.png)
 
 
 
@@ -397,7 +410,7 @@ chickwts_summ
 ```
 
 ```
-# A tibble: 6 x 4
+# A tibble: 6 × 4
   feed      mean_wt sd_wt n_chicks
   <fct>       <dbl> <dbl>    <int>
 1 casein       324.  64.4       12
@@ -425,7 +438,7 @@ ggplot()+
                 width=0.2, col="red") #make it red, and make the width more narrow than the default
 ```
 
-![](/Users/becca.selden/Documents/Collaborations/WellesleyResearch/r_workshop/Rmd.Figures/overlay graphs-1.png)<!-- -->
+![](/Users/rs5/Documents/WellesleyResearch/r_workshop/Rmd.Figures/overlay graphs-1.png)<!-- -->
 
 In this one I also didn't specify the height or width for the figure in the html. Compare with the first graph
 
@@ -439,7 +452,7 @@ band_members
 ```
 
 ```
-# A tibble: 3 x 2
+# A tibble: 3 × 2
   name  band   
   <chr> <chr>  
 1 Mick  Stones 
@@ -452,7 +465,7 @@ band_instruments
 ```
 
 ```
-# A tibble: 3 x 2
+# A tibble: 3 × 2
   name  plays 
   <chr> <chr> 
 1 John  guitar
@@ -465,7 +478,7 @@ band_instruments2
 ```
 
 ```
-# A tibble: 3 x 2
+# A tibble: 3 × 2
   artist plays 
   <chr>  <chr> 
 1 John   guitar
@@ -490,11 +503,11 @@ inner_join(band_members, band_instruments)
 ```
 
 ```
-Joining, by = "name"
+Joining with `by = join_by(name)`
 ```
 
 ```
-# A tibble: 2 x 3
+# A tibble: 2 × 3
   name  band    plays 
   <chr> <chr>   <chr> 
 1 John  Beatles guitar
@@ -507,11 +520,11 @@ left_join(band_members, band_instruments)
 ```
 
 ```
-Joining, by = "name"
+Joining with `by = join_by(name)`
 ```
 
 ```
-# A tibble: 3 x 3
+# A tibble: 3 × 3
   name  band    plays 
   <chr> <chr>   <chr> 
 1 Mick  Stones  <NA>  
@@ -525,11 +538,11 @@ right_join(band_members, band_instruments)
 ```
 
 ```
-Joining, by = "name"
+Joining with `by = join_by(name)`
 ```
 
 ```
-# A tibble: 3 x 3
+# A tibble: 3 × 3
   name  band    plays 
   <chr> <chr>   <chr> 
 1 John  Beatles guitar
@@ -543,11 +556,11 @@ full_join(band_members, band_instruments)
 ```
 
 ```
-Joining, by = "name"
+Joining with `by = join_by(name)`
 ```
 
 ```
-# A tibble: 4 x 3
+# A tibble: 4 × 3
   name  band    plays 
   <chr> <chr>   <chr> 
 1 Mick  Stones  <NA>  
@@ -564,7 +577,7 @@ inner_join(band_members, band_instruments2, by=c("name"="artist"))
 ```
 
 ```
-# A tibble: 2 x 3
+# A tibble: 2 × 3
   name  band    plays 
   <chr> <chr>   <chr> 
 1 John  Beatles guitar

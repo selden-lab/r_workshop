@@ -1,0 +1,88 @@
+---
+title: "Test Markdown"
+author: "Becca Selden"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(here)
+```
+
+### Objective
+Work through RMarkdown commands with students
+Last edited: November 12, 2024
+
+# Big Header
+
+###### Small Header
+
+### This is a code chunk
+This uses 3 backwards apostrophes (on top left of keyboard) 
+
+```{r code chunk1}
+a <- 42
+
+#print the output
+a
+```
+
+### Load a R dataset on cars
+```{r code chunk 2}
+mtcars
+```
+### Install packages
+We want to install tidyverse and here as two packages
+```{r install packages}
+# install.packages(c("tidyverse", "here"))
+# install.packages(c("lubridate"))
+
+```
+
+### Loading data from a url
+```{r load data csv}
+monster_movie_genres <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2024/2024-10-29/monster_movie_genres.csv')
+
+monster_movies <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2024/2024-10-29/monster_movies.csv')
+
+
+```
+`package::function()` is a way to make sure that R is using the "right" function (or the one you want it to use) if there are more than one with same name.
+Read data in by assigning it to a new object (monster_movie_genres) with the backwards arrow `<-` and using read_csv() as the function to do that (in this case from a url, but could also be a csv in the Data folder
+
+### Write a csv output
+`write_csv(object_name, filename_for_saving)`
+```{r write csv}
+write_csv(monster_movie_genres, here::here("Data/monster_movie_genres.csv"))
+write_csv(monster_movies, here::here("Data/monster_movies.csv"))
+
+```
+
+### Read the csv from a file on your computer
+```{r read csv file}
+monster_movie_genres2 <- read_csv(here::here("Data/monster_movie_genres.csv"))
+```
+
+### Merge two files together
+The movie genres file just had codes for the movie
+The movies file had info on the movie (title, date)
+We want them together so we can look at monster movies in a genre by year
+`new_data <- inner_join(data1, data2, by=c(x=y))`
+```{r inner join}
+monster <- inner_join(monster_movie_genres, monster_movies, by="tconst")
+```
+
+### number of genres per movie
+Tidyverse syntax `%>%` = take this then do this
+new_object <- old_object %>%
+do_something_to_old_object
+```{r num genres per movie by year}
+num_genres_by_movie <- monster_movie_genres %>%
+  group_by(tconst) %>%
+  summarize(num_genres=n_distinct(genres))
+
+monster2 <- inner_join(num_genres_by_movie, monster_movies, by="tconst")
+
+```
