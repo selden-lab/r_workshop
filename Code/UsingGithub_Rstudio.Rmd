@@ -1,0 +1,42 @@
+---
+title: "Using GitHub with RStudio"
+author: "Becca Selden"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Introduction
+The SeldenLab uses Github with RStudio to help us share code and collaborate on analysis. RStudio makes it pretty easy to work with Git as long as always remember this order of operations:  
+1. Always "pull" before you start working--This brings the most recent code from the cloud onto your personal machine and makes sure that you are modifying the most up to date version. Git can work with new changes to the same file but a "conflict" could arise if you are working on a section of code that was already changed and there isn't a way to merge the two.  
+2. You save your code regularly, "commit" fairly regularly when you make a change, and "push" to the remote repository on the cloud immediately after you commit so you are pushing just a single "commit".
+
+### "HappyGit with R"
+Folks have developed a fairly user friendly introduction to using R with git: https://happygitwithr.com/
+
+#### Installation
+Work through the Installation section of Happy Git with R to:   
+1. [Register a GitHub account](https://happygitwithr.com/github-acct).  
+2. [Install or upgrade R and RStudio](https://happygitwithr.com/install-r-rstudio).  
+3. [Install Git](https://happygitwithr.com/install-git).  
+4. [Introduce yourself to Git](https://happygitwithr.com/hello-git). Set yourself up with git using the `usethis` package directly in RStudio   
+You don't need to setup a Git client (which is the last step in the Installation section)
+
+#### Connect Git, GitHub, and RStudio
+Work through all sections in this part of the [tutorial](https://happygitwithr.com/connect-intro).  
+
+
+For the first section on a Personal Access Token (PAT) I would recommend the method with the `usethis` package:
+```{r token}
+library(usethis)
+usethis::create_github_token()
+```
+Follow the [instructions](https://happygitwithr.com/https-pat) on copying, pasting this PAT
+
+#### Early GitHub Wins
+1. Work through section 15 [New Project, GitHub first](https://happygitwithr.com/new-github-first) by creating a new project and then pushing it to Github in your personal account (not the SeldenLab).  
+2. Work through section 16 [Existing project, GiHub first](https://happygitwithr.com/existing-github-first) by downloading the `oyster_shell` repository from Github to your computer. The address for that repo is "https://github.com/selden-lab/oyster_shell"
+3. Do Section 18 on [Test drive R Markdown](https://happygitwithr.com/rmd-test-drive) by creating a new RMarkdown file in the repository you created in your personal acccount. Commit, and push this file to GitHub
