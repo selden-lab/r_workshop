@@ -137,7 +137,7 @@ Use the `colnames` function to see the resulting new column names in `clean_peng
 ```
 
 ### Saving output of data wrangling
-We can save our newly cleaned data to a file using `write_csv` and we are going to save it in our "Output" folder. 
+We can save our newly cleaned data to a file using `write_csv` and we are going to save it in our "Output" folder. You may need to create the Output folder by choosing "New Folder" within the "Files" subtab in the bottom right quadrant of the RStudio interface. 
 The syntax is `write_csv(dataset, here::here("path_to_output"))`
 ```{r write output}
 write_csv(clean_penguin, here::here("Output/clean_penguin.csv"))
