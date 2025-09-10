@@ -43,11 +43,12 @@ Follow the [instructions](https://happygitwithr.com/https-pat) on copying, pasti
 1. Create a new repository, get the repository on your computer and then push some changes to GitHub in your personal account (not the SeldenLab).  [New Project, GitHub first](https://happygitwithr.com/new-github-first).
     - Work through 15.1 to make a repo on GitHub (15.1 has lots of options but I find the first one using the GitHub website the most straight forward).  
     - Work through 15.2.2 to connect to the repository on GitHub using RStudio.  
+      - File --> New Project --> Version Control --> Git and then use the repository url
     - Work through 15.3 to make local changes, save commit
 
 
 2. Connect to an existing repository on Github [Existing project, GiHub first](https://happygitwithr.com/existing-github-first)
-    - Follow 16.2.2 to connect to the existing repo using the same proces above using the url for the repository 
+    - Follow 16.2.2 to connect to the existing repo using the same process as above where you make a new project in RStudio from version control using the url for the repository 
     - Use the url address for one of the SeldenLab repos "oyster_shell" to download it to your computer "https://github.com/selden-lab/oyster_shell".   
 
 
